@@ -35,7 +35,7 @@ def register():
         # add a single document to user_data collection
         new_user = user_collection.insert_one(data)
 
-        return jsonify({"message": "Login successful!"})
+        return jsonify({"message": "Register successful!"})
 
 
 if __name__ == '__main__':
