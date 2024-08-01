@@ -1,9 +1,8 @@
 import React from "react";
 import { BrowserRouter as Router, Route, Routes, BrowserRouter } from 'react-router-dom';
 import "./App.css";
-import Login from "./components/login/login";
-import NewUserForm from "./components/Register/newUser";
-
+// import Register from "./components/register/register";
+import Register from "./components/register/register";
 
 
 function App() {
@@ -14,8 +13,8 @@ function App() {
       </div>
     <BrowserRouter>      
       <Routes>
-      <Route path="/" element={<Login />}/>     
-      <Route path="/register" element={<NewUserForm />} />
+      {/* <Route path="/" element={<Login />}/>      */}
+      <Route path="/" element={<Register />} />
       </Routes>
     </BrowserRouter>
     </>
