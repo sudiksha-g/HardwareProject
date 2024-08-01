@@ -1,8 +1,10 @@
-from flask import Flask, request
+from flask import Flask, request, jsonify
 from pymongo import MongoClient
 from bson.json_util import dumps
+from flask_cors import CORS
 
 app = Flask(__name__)
+CORS(app, resources={r"/*": {"origins": "http://localhost:3000"}})
 
 client = MongoClient('localhost', 27017)
 
@@ -22,16 +24,18 @@ def index():
 
 @app.route('/register', methods=('GET', 'POST'))
 def register():
-    # use postman to send data in request and check, pass values for fields: username and password
+    # use postman to send data in request and check, pass values for fields: name, username and password
     if request.method == 'POST':
 
         # fetch these details through registration form
-        data = request.json
+        data = request.get_json()
+        username = data.get('username')
+        password = data.get('password')
 
         # add a single document to user_data collection
         new_user = user_collection.insert_one(data)
 
-        return "Done!"
+        return jsonify({"message": "Login successful!"})
 
 
 if __name__ == '__main__':
