@@ -1,50 +1,137 @@
-import React, { useState } from 'react';
-import CommonTextBox from '../common/TextBox/textbox';
-import CommonButton from '../common/Button/button';
-import { Grid } from "@mui/material";
-import axios from 'axios';
+import React, { useState } from "react";
+import CommonTextBox from "../common/TextBox/textbox";
+import CommonButton from "../common/Button/button";
+import { Grid, Typography } from "@mui/material";
+import { Link } from "react-router-dom";
+import axios from "axios";
+import { display } from "@mui/system";
+
+const styles = {
+  root: {
+    paddingTop: "48px",
+  },
+  container: {
+    display: "flex",
+    justifyContent: "center",
+  },
+  btn: {
+    display: "flex",
+    justifyContent: "center",
+    marginTop: "24px",
+  },
+  error: {
+    color: "red",
+    paddingTop: "24px",
+  },
+  success: {
+    color: "blue",
+    paddingTop: "24px",
+  },
+};
 
 const Register = (props) => {
-  const [username, setUsername] = useState('');
-  const [password, setPassword] = useState('');
-  const [message, setMessage] = useState('');
+  const [formData, setFormData] = useState({
+    userName: "",
+    password: "",
+  });
+  const [message, setMessage] = useState("");
+  const [open, setOpen] = useState(false);
+  const [error, setError] = useState(false);
+  const [isRegistered, setIsRegistered] = useState(false);
+
+  const handleChange = (e) => {
+    const { name, value } = e.target;
+    setFormData({
+      ...formData,
+      [name]: value,
+    });
+    setError(false);
+    setMessage("");
+  };
 
   const handleRegister = () => {
-    axios.post('http://127.0.0.1:5000/register', {
-      username: username,
-      password: password
-    })
-    .then(response => {
-      setMessage(response.data.message);
-      alert(response.data.message); // Show alert on successful Register
-    })
-    .catch(error => {
-      console.error('There was an error!', error);
-      setMessage('Register failed.');
-      alert('Register failed.'); // Show alert on failed Register
-    });
+    axios
+      .post("http://127.0.0.1:5000/register", {
+        username: formData.userName,
+        password: formData.password,
+      })
+      .then((response) => {
+        setMessage(response.data.message);
+        setOpen(true);
+        setIsRegistered(true);
+      })
+      .catch((error) => {
+        setError(true);
+        setMessage(error.response.data.message);
+      });
   };
 
   return (
-    <Grid container display='flex' justifyContent='center'>
-      <Grid item></Grid>
-      <Grid item>
-        <CommonTextBox
-          label="Username"
-          onChange={(e) => setUsername(e.target.value)}
-        />
-        <CommonTextBox
-          label="Password"
-          onChange={(e) => setPassword(e.target.value)}
-        />
-        <CommonButton
-          variant="contained"
-          color="primary"
-          onClick={handleRegister}
-        >
-          Register
-        </CommonButton>
-        {message && <p>{message}</p>}
+    <Grid sx={styles.root}>
+      <Typography
+        variant="h4"
+        component="h1"
+        gutterBottom
+        sx={styles.container}
+      >
+        New User Form
+      </Typography>
+      <Grid container sx={styles.container}>
+        <Grid item></Grid>
+        <Grid item>
+          <CommonTextBox
+            label="Username"
+            name="userName"
+            value={formData.userName}
+            onChange={handleChange}
+          />
+          <CommonTextBox
+            label="Password"
+            name="password"
+            type="password"
+            value={formData.password}
+            onChange={handleChange}
+          />
+          {isRegistered ? (
+            <Grid sx={styles.btn}>
+              <Link to="/">
+                <CommonButton type="submit" variant="contained" color="primary">
+                  Log In
+                </CommonButton>
+              </Link>
+            </Grid>
+          ) : (
+            <Grid container spacing={2} sx={styles.btn}>
+              <Grid item xs={6}>
+                <CommonButton
+                  type="submit"
+                  variant="contained"
+                  color="primary"
+                  fullWidth
+                  onClick={handleRegister}
+                >
+                  Submit
+                </CommonButton>
+              </Grid>
+              <Grid item xs={6}>
+                <Link to="/">
+                  <CommonButton
+                    type="submit"
+                    variant="outlined"
+                    color="primary"
+                    fullWidth
+                  >
+                    Cancel
+                  </CommonButton>
+                </Link>
+              </Grid>
+            </Grid>
+          )}
+
+          {message && (
+            <Grid sx={error ? styles.error : styles.success}>{message}</Grid>
+          )}
+        </Grid>
       </Grid>
     </Grid>
   );
