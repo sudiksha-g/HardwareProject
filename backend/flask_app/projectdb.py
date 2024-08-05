@@ -29,12 +29,12 @@ def createProject(client, projectName, projectId, description):
     projects_collection.insert_one(new_project)
     return "Project created successfully."
 
-def addUser(client, projectId, userId):
+def addUser(client, projectId, username):
     db = client['flask_db']
     projects_collection = db['projects']
     result = projects_collection.update_one(
         {'projectId': projectId},
-        {'$addToSet': {'users': userId}}
+        {'$addToSet': {'users': username}}
     )
 
     if result.modified_count > 0:
@@ -51,12 +51,11 @@ def updateUsage(client, projectId, hwSetName, qty):
         {'projectId': projectId},
         {'$set': {f'hwSets.{hwSetName}': qty}}
     )
-
     if result.modified_count > 0:
         return "Hardware usage updated successfully."
     return "Project not found."
 
-def checkOutHW(client, projectId, hwSetName, qty, userId):
+def checkOutHW(client, projectId, hwSetName, qty, username):
     db = client['flask_db']
     projects_collection = db['projects']
     project = projects_collection.find_one({'projectId': projectId})
@@ -71,8 +70,8 @@ def checkOutHW(client, projectId, hwSetName, qty, userId):
     )
     return "Hardware checked out successfully."
 
-def checkInHW(client, projectId, hwSetName, qty, userId):
-    db = client['your_database_name']
+def checkInHW(client, projectId, hwSetName, qty, username):
+    db = client['flask_db']
     projects_collection = db['projects']
     project = projects_collection.find_one({'projectId': projectId})
     if not project:
