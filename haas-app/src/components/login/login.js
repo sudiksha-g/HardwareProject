@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import CommonTextBox from "../common/TextBox/textbox";
 import CommonButton from "../common/Button/button";
 import { Grid, Typography } from "@mui/material";
@@ -43,6 +43,7 @@ const Login = (props) => {
   const [open, setOpen] = useState(false);
   const [message, setMessage] = useState("");
   const [error, setError] = useState(false);
+  const [enabled, setEnabled] = useState(false);
   const navigate = useNavigate();
 
   const handleLogin = () => {
@@ -70,6 +71,19 @@ const Login = (props) => {
     setMessage("");
   };
 
+  useEffect(() => {
+    if (
+      userLoginData &&
+      userLoginData.userName.trim() !== "" &&
+      userLoginData &&
+      userLoginData.password.trim() !== ""
+    ) {
+      setEnabled(true);
+    } else {
+      setEnabled(false);
+    }
+  }, [userLoginData.userName, userLoginData.password]);
+
   return (
     <>
       <Grid sx={styles.titleContainer}>
@@ -93,6 +107,7 @@ const Login = (props) => {
           />
           <CommonButton
             sx={styles.button}
+            disabled={!enabled}
             variant="contained"
             color="primary"
             onClick={handleLogin}
