@@ -94,11 +94,7 @@ const Register = (props) => {
           />
           {isRegistered ? (
             <Grid sx={styles.btn}>
-              <Link to="/">
-                <CommonButton type="submit" variant="contained" color="primary">
-                  Log In
-                </CommonButton>
-              </Link>
+              <Link to="/">Go To Login</Link>
             </Grid>
           ) : (
             <Grid container spacing={2} sx={styles.btn}>
