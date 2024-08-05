@@ -1,24 +1,24 @@
 import React from "react";
-import { BrowserRouter as Router, Route, Routes, BrowserRouter } from 'react-router-dom';
+import {
+  BrowserRouter as Router,
+  Route,
+  Routes,
+  BrowserRouter,
+} from "react-router-dom";
 import "./App.css";
-// import Register from "./components/register/register";
 import Register from "./components/register/register";
 import Login from "./components/login/login";
-
+import Project from "./components/project/project";
 
 function App() {
   return (
-    <>
-    <div className="titleContainer">
-        <div style={{padding: "24px"}}>Welcome to HaaS Application</div>
-      </div>
-    <BrowserRouter>      
+    <BrowserRouter>
       <Routes>
-      <Route path="/" element={<Login />}/>     
-      <Route path="/register" element={<Register />} />
+        <Route path="/" element={<Login />} />
+        <Route path="/register" element={<Register />} />
+        <Route path="/project" element={<Project />} />
       </Routes>
     </BrowserRouter>
-    </>
   );
 }
 
