@@ -8,7 +8,7 @@ import {
 import "./App.css";
 import Register from "./components/register/register";
 import Login from "./components/login/login";
-import Project from "./components/project/project";
+// import Project from "./components/project/project";
 
 function App() {
   return (
@@ -16,7 +16,7 @@ function App() {
       <Routes>
         <Route path="/" element={<Login />} />
         <Route path="/register" element={<Register />} />
-        <Route path="/project" element={<Project />} />
+        {/* <Route path="/project" element={<Project />} /> */}
       </Routes>
     </BrowserRouter>
   );
