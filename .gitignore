@@ -1,5 +1,5 @@
 # Python
-__pycache__/
+**/__pycache__/
 *.py[cod]
 *.pyo
 *.pyd
@@ -26,6 +26,7 @@ venv/
 ENV/
 env.bak/
 venv.bak/
+mojo_env/
 
 # macOS
 .DS_Store
@@ -97,3 +98,5 @@ public/
 
 # Vue.js
 *.vue
+
+**/package-lock.json/
