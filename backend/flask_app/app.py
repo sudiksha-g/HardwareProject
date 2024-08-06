@@ -53,5 +53,17 @@ def get_all_projects():
     return dumps(projectdb.get_all_projects())
 
 
+@app.route('/getUserProjects', methods=['GET'])
+def get_user_projects():
+    data = request.get_json()
+    return dumps(userdb.get_user_projects_list(data["username"]))
+
+
+@app.route('/joinProject', methods=['GET'])
+def join_project():
+    data = request.get_json()
+    return dumps(join_project(data["username"], data["projectId"]))
+
+
 if __name__ == '__main__':
     app.run(debug=True)

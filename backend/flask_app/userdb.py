@@ -39,7 +39,7 @@ class UserDB:
         else:
             return "User not found."
 
-    def get_user_projects_list(self, username):
+    def get_user_projects(self, username):
         user = self.users_collection.find_one({'username': username}, {
             'projects': 1, '_id': 0})
         if user:
