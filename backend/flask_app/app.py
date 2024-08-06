@@ -6,41 +6,51 @@ from werkzeug.security import generate_password_hash, check_password_hash
 from pymongo.errors import DuplicateKeyError
 from login import *
 from register import *
-
+import projectdb
+from userdb import UserDB
+from projectdb import ProjectDB
 app = Flask(__name__)
 CORS(app, resources={r"/*": {"origins": "http://localhost:3000"}})
 
 client = MongoClient('localhost', 27017)
+db = client['flask_db']
 
-# For dev purpose, remove later
-# db name: flask_db
-db = client.flask_db
-# collection name: user_data
-user_collection = db.user_data
-user_collection.create_index("username", unique=True)
+userdb = UserDB(db)
+projectdb = ProjectDB(db)
 
 
-@app.route('/', methods=('GET', 'POST'))
-def index():
-    # fetch documents from user_data collection
-    user_documents = user_collection.find()
-    return dumps(list(user_documents))
+@app.route('/getAllUsers', methods=['GET'])
+def get_all_users():
+    return dumps(userdb.get_all_users())
 
 
-@app.route('/register', methods=('POST'))
-def register():
-    # use postman to send data in request and check, pass values for fields: name, username and password
-    if request.method == 'POST':
-
-        # fetch these details through registration form
-        data = request.get_json()
-        return registerUser(client, data)
-
-
-@app.route('/login', methods=['POST'])
-def login():
+@app.route('/registerUser', methods=['POST'])
+def register_user():
     data = request.get_json()
-    return loginUser(client, data)
+    return dumps(userdb.register_user(data["username"], data["password"]))
+
+
+@app.route('/loginUser', methods=['POST'])
+def login_user():
+    data = request.get_json()
+    return dumps(userdb.login_user(data["username"], data["password"]))
+
+
+@app.route('/getProjects', methods=['GET'])
+def get_projects():
+    data = request.get_json()
+    return dumps(projectdb.queryProject(client, data["projectId"]))
+
+
+@app.route('/createProject', methods=['POST'])
+def create_project():
+    data = request.get_json()
+    return dumps(projectdb.create_project(data["projectId"], data["projectName"], data["projectDesc"]))
+
+
+@app.route('/getAllProjects', methods=['GET'])
+def get_all_projects():
+    return dumps(projectdb.get_all_projects())
 
 
 if __name__ == '__main__':
