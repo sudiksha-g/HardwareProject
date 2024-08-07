@@ -18,7 +18,7 @@ class ProjectDB:
             'projectId': project_id,
             'projectName': project_name,
             'description': description,
-            'hwSets': {},
+            'hwSets': [[0, 100, 100], [0, 100, 100]],
             'users': []
         }
 
@@ -40,40 +40,47 @@ class ProjectDB:
         else:
             return "Project not found."
 
-    def updateUsage(client, projectId, hwSetName, qty):
-        db = client['flask_db']
-        projects_collection = db['projects']
-        result = projects_collection.update_one(
-            {'projectId': projectId},
-            {'$set': {f'hwSets.{hwSetName}': qty}}
-        )
-        if result.modified_count > 0:
-            return "Hardware usage updated successfully."
-        return "Project not found."
+    # def updateUsage(client, projectId, hwSetName, qty):
+    #     db = client['flask_db']
+    #     projects_collection = db['projects']
+    #     result = projects_collection.update_one(
+    #         {'projectId': projectId},
+    #         {'$set': {f'hwSets.{hwSetName}': qty}}
+    #     )
+    #     if result.modified_count > 0:
+    #         return "Hardware usage updated successfully."
+    #     return "Project not found."
 
-    def checkOutHW(client, projectId, hwSetName, qty, username):
-        db = client['flask_db']
-        projects_collection = db['projects']
-        project = projects_collection.find_one({'projectId': projectId})
-        if not project:
-            return "Project not found."
-        current_qty = project['hwSets'].get(hwSetName, 0)
-        if current_qty < qty:
-            return "Insufficient hardware quantity available."
-        projects_collection.update_one(
-            {'projectId': projectId},
-            {'$inc': {f'hwSets.{hwSetName}': -qty}}
+    def check_out_hardware(self, project_id, hardware_set_num, value):
+        project = self.projects_collection.find_one({'projectId': project_id})
+        hw_sets = project['hwSets']
+        msg = ""
+        if hw_sets[hardware_set_num][1] < value:
+            hw_sets[hardware_set_num][1] = 0
+            hw_sets[hardware_set_num][0] = hw_sets[hardware_set_num][2]
+            msg += "Not enough availability to check out entire quantity, "
+        else:
+            hw_sets[hardware_set_num][1] -= value
+            hw_sets[hardware_set_num][0] += value
+        self.collection.update_one(
+            {'projectId': project_id},
+            {'$set': {'hwSets': hw_sets}}
         )
-        return "Hardware checked out successfully."
+        return msg+"Checked Out Successfully!"
 
-    def checkInHW(client, projectId, hwSetName, qty, username):
-        db = client['flask_db']
-        projects_collection = db['projects']
-        project = projects_collection.find_one({'projectId': projectId})
-        if not project:
-            return "Project not found."
-        projects_collection.update_one(
-            {'projectId': projectId},
-            {'$inc': {f'hwSets.{hwSetName}': qty}}
+    def check_in_hardware(self, project_id, hardware_set_num, value):
+        project = self.projects_collection.find_one({'projectId': project_id})
+        hw_sets = project['hwSets']
+        msg = ""
+        if hw_sets[hardware_set_num][0] < value:
+            hw_sets[hardware_set_num][0] = 0
+            hw_sets[hardware_set_num][1] = hw_sets[hardware_set_num][2]
+            msg += "Not enough checked out items to be checked in, "
+        else:
+            hw_sets[hardware_set_num][0] -= value
+            hw_sets[hardware_set_num][1] += value
+        self.collection.update_one(
+            {'projectId': project_id},
+            {'$set': {'hwSets': hw_sets}}
         )
-        return "Hardware checked in successfully."
+        return msg+"Checked In Successfully!"

@@ -9,6 +9,7 @@ from register import *
 import projectdb
 from userdb import UserDB
 from projectdb import ProjectDB
+from hardwaredb import HardwareDB
 app = Flask(__name__)
 CORS(app, resources={r"/*": {"origins": "http://localhost:3000"}})
 
@@ -17,6 +18,7 @@ db = client['flask_db']
 
 userdb = UserDB(db)
 projectdb = ProjectDB(db)
+hardwaredb = HardwareDB(db)
 
 
 @app.route('/getAllUsers', methods=['GET'])
@@ -62,7 +64,19 @@ def get_user_projects():
 @app.route('/joinProject', methods=['GET'])
 def join_project():
     data = request.get_json()
-    return dumps(join_project(data["username"], data["projectId"]))
+    return dumps(userdb.join_project(data["username"], data["projectId"]))
+
+
+@app.route('/checkOut', methods=['POST'])
+def check_out():
+    data = request.get_json()
+    return dumps(projectdb.check_out_hardware(data["projectID"], data["hwSetNum"], data["value"]))
+
+
+@app.route('/checkIn', methods=['POST'])
+def check_in():
+    data = request.get_json()
+    return dumps(projectdb.check_in_hardware(data["projectID"], data["hwSetNum"], data["value"]))
 
 
 if __name__ == '__main__':
