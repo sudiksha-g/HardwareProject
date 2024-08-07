@@ -1,3 +1,8 @@
+from werkzeug.security import generate_password_hash
+from werkzeug.security import check_password_hash
+from flask_jwt_extended import create_access_token
+
+
 class UserDB:
     def __init__(self, db):
         self.users_collection = db['users']
@@ -7,7 +12,7 @@ class UserDB:
             return "User already exists."
         new_user = {
             'username': username,
-            'password': password,
+            'password': generate_password_hash(password),
             'projects': []
         }
         self.users_collection.insert_one(new_user)
@@ -23,8 +28,9 @@ class UserDB:
 
     def login_user(self, username, password):
         user = self.get_user(username)
-        if user and (user['password'] == password):
-            return "Login successful."
+        if user and check_password_hash(user['password'], password):
+            access_token = create_access_token(identity={"username": username})
+            return {"message": "Login successful!", "access_token": access_token}
         return "Invalid username or password."
 
     def join_project(self, username, projectId):

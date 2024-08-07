@@ -48,7 +48,7 @@ const Login = (props) => {
 
   const handleLogin = () => {
     axios
-      .post("http://127.0.0.1:5000/login", {
+      .post("http://127.0.0.1:5000/loginUser", {
         username: userLoginData.userName,
         password: userLoginData.password,
       })
@@ -56,7 +56,8 @@ const Login = (props) => {
         console.log("response", response);
         setOpen(true);
         setMessage(response.data.message);
-        navigate("/project");
+        localStorage.setItem("token", response.data.access_token);
+        navigate("/protected");
       })
       .catch((error) => {
         console.error("There was an error!", error.response.data.message);
