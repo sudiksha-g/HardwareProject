@@ -55,7 +55,9 @@ const Login = (props) => {
         console.log("response", response);
         setOpen(true);
         setMessage(response.data.message);
-        navigate("/project");
+        // Store the token in local storage
+        localStorage.setItem("token", response.data.access_token);
+        navigate("/protected"); // Navigate to protected route
       })
       .catch((error) => {
         console.error("There was an error!", error.response.data.message);

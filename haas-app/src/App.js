@@ -9,6 +9,8 @@ import "./App.css";
 import Register from "./components/register/register";
 import Login from "./components/login/login";
 // import Project from "./components/project/project";
+import Protected from "./components/protected/protected";
+
 
 function App() {
   return (
@@ -17,6 +19,7 @@ function App() {
         <Route path="/" element={<Login />} />
         <Route path="/register" element={<Register />} />
         {/* <Route path="/project" element={<Project />} /> */}
+        <Route path="/protected" element={<Protected />} />
       </Routes>
     </BrowserRouter>
   );
