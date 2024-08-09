@@ -1,5 +1,4 @@
 import React, { useState } from "react";
-import PropTypes from "prop-types";
 import Box from "@mui/material/Box";
 import Collapse from "@mui/material/Collapse";
 import IconButton from "@mui/material/IconButton";
@@ -9,15 +8,12 @@ import TableCell from "@mui/material/TableCell";
 import TableContainer from "@mui/material/TableContainer";
 import TableHead from "@mui/material/TableHead";
 import TableRow from "@mui/material/TableRow";
-import Typography from "@mui/material/Typography";
 import Paper from "@mui/material/Paper";
 import KeyboardArrowDownIcon from "@mui/icons-material/KeyboardArrowDown";
 import KeyboardArrowUpIcon from "@mui/icons-material/KeyboardArrowUp";
 import CommonButton from "../common/Button/button";
 import CommonTextBox from "../common/TextBox/textbox";
-import CommonDialog from "../common/DialogBox/dialogBox";
 import { Button, Grid } from "@mui/material";
-import { borderRadius, padding, textTransform } from "@mui/system";
 import axios from "axios";
 
 function createData(name, id, description) {
