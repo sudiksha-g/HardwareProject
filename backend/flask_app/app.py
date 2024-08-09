@@ -62,10 +62,10 @@ def get_all_projects():
 @app.route('/getUserProjects', methods=['GET'])
 def get_user_projects():
     data = request.get_json()
-    return dumps(userdb.get_user_projects_list(data["username"]))
+    return dumps(userdb.get_user_projects(data["username"]))
 
 
-@app.route('/joinProject', methods=['GET'])
+@app.route('/joinProject', methods=['POST'])
 def join_project():
     data = request.get_json()
     return dumps(userdb.join_project(data["username"], data["projectId"]))
