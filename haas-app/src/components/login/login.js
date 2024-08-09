@@ -56,6 +56,7 @@ const Login = (props) => {
         console.log("response", response);
         setOpen(true);
         setMessage(response.data.message);
+        sessionStorage.setItem('user', JSON.stringify(userLoginData.userName));
         navigate("/project");
       })
       .catch((error) => {

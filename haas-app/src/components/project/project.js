@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useState,useEffect } from "react";
 import Box from "@mui/material/Box";
 import Collapse from "@mui/material/Collapse";
 import IconButton from "@mui/material/IconButton";
@@ -151,7 +151,14 @@ export default function CollapsibleTable() {
     projectName: "",
     projectDesc: "",
   });
+  const [message, setMessage] = useState("");
+  const [projectIdToJoin, setProjectIdToJoin] = useState("");
+  const [joinMessage, setJoinMessage] = useState("");
+  const user = JSON.parse(sessionStorage.getItem('user'));
 
+
+
+  //
   const handleCreateClick = () => {
     setOpenCreateNew(true);
     setOpenJoin(false);
@@ -162,6 +169,15 @@ export default function CollapsibleTable() {
     setOpenCreateNew(false);
   };
 
+  const handleTextChange = (e) => {
+    const { name, value } = e.target;
+    setProjectData({ ...projectData, [name]: value });
+  };
+
+  const handleProjectIdToJoin = (e) =>{
+    setProjectIdToJoin(e.target.value)
+  }
+
   const handleCreateProject = () => {
     axios
       .post("http://127.0.0.1:5000/createProject", {
@@ -171,11 +187,45 @@ export default function CollapsibleTable() {
       })
       .then((response) => {
         console.log("response", response);
+        setMessage(response.data);
       })
       .catch((error) => {
         console.error("There was an error!", error.response.data.message);
       });
   };
+
+  const handleJoinProject = () => {
+    axios
+      .post("http://127.0.0.1:5000/joinProject", {
+        projectId: projectIdToJoin,
+        username : user
+      })
+      .then((response) => {
+        console.log("response", response);
+        setJoinMessage(response.data);
+      })
+      .catch((error) => {
+        console.error("There was an error!", error.response.data.message);
+      });
+  }
+
+  useEffect(() => {
+    // Fetch user projects when component mounts
+    if (user) {
+      axios
+        .get("http://127.0.0.1:5000/getUserProjects", {
+          username: user, // Adjust if needed to match your API
+        })
+        .then((response) => {
+          console.log("response". response)
+          //setProjects(response.data.projects || []); // Adjust based on your API response
+        })
+        .catch((error) => {
+          console.error("There was an error fetching user projects!", error);
+        });
+    }
+  }, [user]);
+
 
   return (
     <Grid container style={{ margin: "24px", width: "auto" }}>
@@ -239,16 +289,21 @@ export default function CollapsibleTable() {
                 label="Project Name"
                 name="projectName"
                 value={projectData.projectName}
+                onChange={handleTextChange}
               />
               <CommonTextBox
                 label="Project Id"
                 name="projectId"
                 value={projectData.projectId}
+
+            onChange={handleTextChange}
               />
               <CommonTextBox
                 label="Project Description"
                 name="projectDesc"
                 value={projectData.projectDesc}
+
+            onChange={handleTextChange}
               />
               <Grid
                 item
@@ -262,6 +317,9 @@ export default function CollapsibleTable() {
               </Grid>
             </Grid>
           </Grid>
+          {message && (
+            <Grid>{message}</Grid>
+          )}
         </Grid>
       )}
       {openJoin && (
@@ -277,17 +335,21 @@ export default function CollapsibleTable() {
               Join an existing project
             </div>
             <Grid item xs={6}>
-              <CommonTextBox label="Project ID" name="projectId" />
+              <CommonTextBox label="Project ID" name="projectId" 
+                value={projectIdToJoin} onChange={handleProjectIdToJoin}/>
               <Grid
                 item
                 justifyContent="center"
                 display="flex"
                 style={{ marginTop: "24px" }}
               >
-                <CommonButton>Join</CommonButton>
+                <CommonButton onClick={handleJoinProject}>Join</CommonButton>
               </Grid>
             </Grid>
           </Grid>
+          {joinMessage && (
+            <Grid>{joinMessage}</Grid>
+          )}
         </Grid>
       )}
     </Grid>
