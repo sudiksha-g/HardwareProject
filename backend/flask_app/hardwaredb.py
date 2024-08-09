@@ -26,7 +26,7 @@ class HardwareDB:
             return "Availability updated successfully."
         return "Hardware set not found."
 
-    def request_space(self, hw_set_num, value):
+    def de_allocate_units(self, hw_set_num, value):
         hw_set = self.hardware_collection.find_one({'hwNum': hw_set_num})
         if not hw_set:
             return False
@@ -41,6 +41,22 @@ class HardwareDB:
         )
         return value
         # return "Space requested successfully."
+
+    def allocate_units(self, hw_set_num, value):
+        hw_set = self.hardware_collection.find_one({'hwNum': hw_set_num})
+        if not hw_set:
+            return False
+            # return "Hardware set not found."
+        # if hw_set['availability'] < value:
+        #     self.update_availability(hw_set_num, 0)
+        #     return hw_set['availability']
+            # return "Not enough hardware available."
+        hw_set['availability'] += value
+        self.hardware_collection.update_one(
+            {'hwNum': hw_set_num},
+            {'$inc': {'availability': value}}
+        )
+        return value
 
     def get_all_hardware_names(self):
         hw_names = self.hardware_collection.find({}, {'hwNum': 1, '_id': 0})

@@ -60,7 +60,7 @@ class ProjectDB(hardwaredb.HardwareDB):
     def check_out_hardware(self, project_id, hw_set_num, value):
         project = self.projects_collection.find_one({'projectId': project_id})
         checked_out_list = project['checkedOutList']
-        checked_out_value = self.request_space(hw_set_num, value)
+        checked_out_value = self.de_allocate_units(hw_set_num, value)
         hw_set_num -= 1
         if checked_out_value:
             checked_out_list[hw_set_num] += checked_out_value
@@ -74,16 +74,15 @@ class ProjectDB(hardwaredb.HardwareDB):
     def check_in_hardware(self, project_id, hw_set_num, value):
         project = self.projects_collection.find_one({'projectId': project_id})
         checked_out_list = project['checkedOutList']
-        msg = ""
-        if checked_out_list[hw_set_num][0] < value:
-            checked_out_list[hw_set_num][0] = 0
-            checked_out_list[hw_set_num][1] = checked_out_list[hw_set_num][2]
-            msg += "Not enough checked out items to be checked in, "
-        else:
-            checked_out_list[hw_set_num][0] -= value
-            checked_out_list[hw_set_num][1] += value
-        self.collection.update_one(
-            {'projectId': project_id},
-            {'$set': {'checkedOutList': checked_out_list}}
-        )
-        return msg+"Checked In Successfully!"
+        hw_set_num -= 1
+        if checked_out_list[hw_set_num] < value:
+            return "Not enough hardware checked out."
+        checked_in_value = self.allocate_units(hw_set_num+1, value)
+        if checked_in_value:
+            checked_out_list[hw_set_num] -= checked_in_value
+            self.collection.update_one(
+                {'projectId': project_id},
+                {'$set': {'checkedOutList': checked_out_list}}
+            )
+            return "Checked in, "+checked_in_value
+        return "Couldn't check in"
