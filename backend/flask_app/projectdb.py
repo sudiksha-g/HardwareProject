@@ -64,7 +64,7 @@ class ProjectDB(hardwaredb.HardwareDB):
         hw_set_num -= 1
         if checked_out_value:
             checked_out_list[hw_set_num] += checked_out_value
-            self.collection.update_one(
+            self.projects_collection.update_one(
                 {'projectId': project_id},
                 {'$set': {'checkedOutList': checked_out_list}}
             )

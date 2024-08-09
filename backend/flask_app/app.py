@@ -33,13 +33,13 @@ def get_all_users():
 @app.route('/registerUser', methods=['POST'])
 def register_user():
     data = request.get_json()
-    return dumps(userdb.register_user(data["username"], data["password"]))
+    return userdb.register_user(data["username"], data["password"])
 
 
 @app.route('/loginUser', methods=['POST'])
 def login_user():
     data = request.get_json()
-    return dumps(userdb.login_user(data["username"], data["password"]))
+    return userdb.login_user(data["username"], data["password"])
 
 
 @app.route('/getProjects', methods=['GET'])
@@ -62,7 +62,7 @@ def get_all_projects():
 @app.route('/getUserProjects', methods=['GET'])
 def get_user_projects():
     data = request.get_json()
-    return dumps(userdb.get_user_projects(data["username"]))
+    return userdb.get_user_projects(data["username"])
 
 
 @app.route('/joinProject', methods=['POST'])

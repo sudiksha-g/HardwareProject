@@ -4,7 +4,15 @@ class HardwareDB:
 
     def create_hardware_set(self, hw_set_num, init_capacity):
         if self.hardware_collection.find_one({'hwNum': hw_set_num}):
-            return "Hardware set with this name already exists."
+            query = {'hwNum': hw_set_num}
+            update = {
+                '$set': {
+                    'capacity': init_capacity,
+                    'availability': init_capacity
+                }
+            }
+            self.hardware_collection.update_one(query, update)
+            return "Hardware set with this name already exists but instantiated with new values"
         new_hw_set = {
             'hwNum': hw_set_num,
             'capacity': init_capacity,

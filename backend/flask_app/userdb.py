@@ -1,17 +1,22 @@
-class UserDB:
+from bson.json_util import dumps
+import projectdb
+
+
+class UserDB(projectdb.ProjectDB):
     def __init__(self, db):
+        super().__init__(db)
         self.users_collection = db['users']
 
     def register_user(self, username, password):
         if self.users_collection.find_one({'username': username}):
-            return "User already exists."
+            return dumps({"status": "error", "message": "User already exists."}), 500
         new_user = {
             'username': username,
             'password': password,
             'projects': []
         }
         self.users_collection.insert_one(new_user)
-        return "User registered successfully."
+        return dumps({"status": "success", "message": "User registered successfully."}), 200
 
     def get_user(self, username):
         user = self.users_collection.find_one({'username': username})
@@ -24,8 +29,8 @@ class UserDB:
     def login_user(self, username, password):
         user = self.get_user(username)
         if user and (user['password'] == password):
-            return "Login successful."
-        return "Invalid username or password."
+            return dumps({"status": "error", "code": 200, "message": "Login Successful"}), 200
+        return dumps({"status": "error", "code": 500, "message": "Invalid username or password"}), 500
 
     def join_project(self, username, projectId):
         result = self.users_collection.update_one(
@@ -33,15 +38,21 @@ class UserDB:
             {'$addToSet': {'projects': projectId}}
         )
         if result.modified_count > 0:
-            return "User added to project successfully."
+            return dumps({"status": "error", "code": 200, "message": "User added to project successfully."}), 200
         elif result.matched_count > 0:
-            return "User already part of the project."
+            return dumps({"status": "error", "code": 500, "message": "User already part of the project."}), 500
         else:
-            return "User not found."
+            return dumps({"status": "error", "code": 500, "message": "User not found."}), 500
 
     def get_user_projects(self, username):
-        user = self.users_collection.find_one({'username': username}, {
-            'projects': 1, '_id': 0})
+        user = self.users_collection.find_one({'username': username})
         if user:
-            return user.get('projects', [])
-        return "User not found."
+            project_id_list = user.get('projects', [])
+            print(project_id_list)
+            projects = self.projects_collection.find(
+                {'projectId': {'$in': project_id_list}})
+            projects = list(projects)
+            print("$$$$$$$$", projects)
+            return dumps({"uo": projects})
+
+        return dumps({"status": "error", "code": 500, "message": "User not found."}), 500
