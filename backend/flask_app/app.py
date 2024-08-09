@@ -20,6 +20,10 @@ userdb = UserDB(db)
 projectdb = ProjectDB(db)
 hardwaredb = HardwareDB(db)
 
+# Instantiating checkedOutList
+hardwaredb.create_hardware_set(1, 100)
+hardwaredb.create_hardware_set(2, 100)
+
 
 @app.route('/getAllUsers', methods=['GET'])
 def get_all_users():
@@ -77,6 +81,12 @@ def check_out():
 def check_in():
     data = request.get_json()
     return dumps(projectdb.check_in_hardware(data["projectID"], data["hwSetNum"], data["value"]))
+
+
+@app.route('/queryHardwareSet', methods=['GET'])
+def query_hardware_set():
+    data = request.get_json()
+    return dumps(hardwaredb.query_hardware_set(data["hwSetNum"]))
 
 
 if __name__ == '__main__':
