@@ -48,7 +48,7 @@ const Login = (props) => {
 
   const handleLogin = () => {
     axios
-      .post("http://127.0.0.1:5000/login", {
+      .post("http://127.0.0.1:5000/loginUser", {
         username: userLoginData.userName,
         password: userLoginData.password,
       })

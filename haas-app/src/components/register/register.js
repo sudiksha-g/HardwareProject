@@ -51,7 +51,7 @@ const Register = (props) => {
 
   const handleRegister = () => {
     axios
-      .post("http://127.0.0.1:5000/register", {
+      .post("http://127.0.0.1:5000/registerUser", {
         username: formData.userName,
         password: formData.password,
       })
