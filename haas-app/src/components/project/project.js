@@ -205,6 +205,8 @@ export default function CollapsibleTable() {
       })
       .then((response) => {
         setMessage(response.data);
+        setOpenDialog(true);
+        setDialogMessage(response.data);
       })
       .catch((error) => {
         console.error("There was an error!", error.response.data.message);
@@ -219,6 +221,10 @@ export default function CollapsibleTable() {
       })
       .then((response) => {
         setJoinMessage(response.data);
+        fetchProjectData();
+        setOpenCreateNew(false);
+        setOpenDialog(true);
+        setDialogMessage(response.data);
       })
       .catch((error) => {
         console.error("There was an error!", error.response.data.message);
@@ -236,7 +242,7 @@ export default function CollapsibleTable() {
         })
         .then((response) => {
           setOpenDialog(true);
-          setDialogMessage(`Checked out ${value} units successfully.`);
+          setDialogMessage(response.data);
         })
         .catch((error) => {
           setDialogMessage("Error during checkout!");
@@ -259,7 +265,7 @@ export default function CollapsibleTable() {
         })
         .then((response) => {
           setOpenDialog(true);
-          setDialogMessage(`Checked in ${value} units successfully.`);
+          setDialogMessage(response.data);
         })
         .catch((error) => {
           setDialogMessage("Error during check-in!");
@@ -460,7 +466,7 @@ export default function CollapsibleTable() {
               </Grid>
             </Grid>
           </Grid>
-          {joinMessage && <Grid>{joinMessage}</Grid>}
+          {/* {joinMessage && <Grid>{joinMessage}</Grid>} */}
         </Grid>
       )}
     </Grid>

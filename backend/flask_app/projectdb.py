@@ -73,7 +73,7 @@ class ProjectDB(hardwaredb.HardwareDB):
                 {'projectId': project_id},
                 {'$set': {'checkedOutList': checked_out_list}}
             )
-            return f"Checked out, {checked_out_value}"
+            return f"Checked out, {checked_out_value} units successfully!"
         return "Couldn't check out"
 
     def check_in_hardware(self, project_id, hw_set_num, value):
@@ -81,7 +81,7 @@ class ProjectDB(hardwaredb.HardwareDB):
         checked_out_list = project['checkedOutList']
         hw_set_num -= 1
         if checked_out_list[hw_set_num] < value:
-            return "Not enough hardware checked out."
+            return "Not enough hardware units checked out!"
         checked_in_value = self.allocate_units(hw_set_num+1, value)
         if checked_in_value:
             checked_out_list[hw_set_num] -= checked_in_value
@@ -89,5 +89,5 @@ class ProjectDB(hardwaredb.HardwareDB):
                 {'projectId': project_id},
                 {'$set': {'checkedOutList': checked_out_list}}
             )
-            return f"Checked In, {checked_in_value}"
+            return f"Checked In, {checked_in_value} units successfully!"
         return "Couldn't check in"

@@ -32,17 +32,21 @@ class UserDB(projectdb.ProjectDB):
             return dumps({"status": "error", "code": 200, "message": "Login Successful"}), 200
         return dumps({"status": "error", "code": 500, "message": "Invalid username or password"}), 500
 
-    def join_project(self, username, projectId):
-        result = self.users_collection.update_one(
-            {'username': username},
-            {'$addToSet': {'projects': projectId}}
-        )
+    def join_project(self, username, project_id):
+        project = self.get_project(project_id)
+        if (project):
+            result = self.users_collection.update_one(
+                {'username': username},
+                {'$addToSet': {'projects': project_id}}
+            )
+        else:
+            return dumps({"status": "Failure", "code": 400, "message": "Project does not exist"}), 400
         if result.modified_count > 0:
             return dumps({"status": "Success", "code": 200, "message": "User added to project successfully."}), 200
         elif result.matched_count > 0:
-            return dumps({"status": "error", "code": 500, "message": "User already part of the project."}), 500
+            return dumps({"status": "error", "code": 409, "message": "User already part of the project."}), 409
         else:
-            return dumps({"status": "error", "code": 500, "message": "User not found."}), 500
+            return dumps({"status": "error", "code": 404, "message": "User not found."}), 404
 
     def get_user_projects(self, username):
         user = self.users_collection.find_one({'username': username})
