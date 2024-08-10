@@ -224,7 +224,9 @@ export default function CollapsibleTable() {
         setDialogMessage(response.data);
       })
       .catch((error) => {
-        console.error("There was an error!", error.response.data.message);
+        console.error("There was an error!");
+        setOpenDialog(true);
+        setDialogMessage(error.message);
       });
   };
 

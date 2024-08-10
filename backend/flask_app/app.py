@@ -13,7 +13,7 @@ from projectdb import ProjectDB
 from hardwaredb import HardwareDB
 app = Flask(__name__)
 
-app.config['JWT_SECRET_KEY'] = '8692eb049743088c8e8068e72d47cab56e45bbaca24ca74054b900b51e30dee4'
+app.config['JWT_SECRET_KEY'] = '8692eb049743088c8e8068e72d47cab56e45bbaca24ca74054b900b51e30dee5'
 jwt = JWTManager(app)
 CORS(app, resources={r"/*": {"origins": "http://localhost:3000"}})
 
