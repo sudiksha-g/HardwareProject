@@ -48,11 +48,9 @@ class UserDB(projectdb.ProjectDB):
         user = self.users_collection.find_one({'username': username})
         if user:
             project_id_list = user.get('projects', [])
-            print(project_id_list)
             projects = self.projects_collection.find(
                 {'projectId': {'$in': project_id_list}})
             projects = list(projects)
-            print("$$$$$$$$", projects)
             return dumps({"projects": projects}), 200
 
         return dumps({"status": "error", "code": 500, "message": "User not found."}), 500

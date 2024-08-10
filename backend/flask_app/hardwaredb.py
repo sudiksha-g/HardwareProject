@@ -2,17 +2,19 @@ class HardwareDB:
     def __init__(self, db):
         self.hardware_collection = db['hardware']
 
+    def init_hardware_set(self, hw_set_num, init_capacity):
+        query = {'hwNum': hw_set_num}
+        update = {
+            '$set': {
+                'capacity': init_capacity,
+                'availability': init_capacity
+            }
+        }
+        self.hardware_collection.update_one(query, update)
+
     def create_hardware_set(self, hw_set_num, init_capacity):
         if self.hardware_collection.find_one({'hwNum': hw_set_num}):
-            query = {'hwNum': hw_set_num}
-            update = {
-                '$set': {
-                    'capacity': init_capacity,
-                    'availability': init_capacity
-                }
-            }
-            self.hardware_collection.update_one(query, update)
-            return "Hardware set with this name already exists but instantiated with new values"
+            return "Hardware set with this name already exists"
         new_hw_set = {
             'hwNum': hw_set_num,
             'capacity': init_capacity,
@@ -59,7 +61,7 @@ class HardwareDB:
         #     self.update_availability(hw_set_num, 0)
         #     return hw_set['availability']
             # return "Not enough hardware available."
-        hw_set['availability'] += value
+        # hw_set['availability'] += value
         self.hardware_collection.update_one(
             {'hwNum': hw_set_num},
             {'$inc': {'availability': value}}

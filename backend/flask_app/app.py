@@ -23,6 +23,7 @@ hardwaredb = HardwareDB(db)
 # Instantiating checkedOutList
 hardwaredb.create_hardware_set(1, 100)
 hardwaredb.create_hardware_set(2, 100)
+# projectdb.init_projects()
 
 
 @app.route('/registerUser', methods=['POST'])
@@ -53,6 +54,18 @@ def create_project():
 def join_project():
     data = request.get_json()
     return dumps(userdb.join_project(data["username"], data["projectId"]))
+
+
+@app.route('/checkOut', methods=['POST'])
+def check_out():
+    data = request.get_json()
+    return dumps(projectdb.check_out_hardware(data["projectId"], data["hwSetNum"], data["value"]))
+
+
+@app.route('/checkIn', methods=['POST'])
+def check_in():
+    data = request.get_json()
+    return dumps(projectdb.check_in_hardware(data["projectId"], data["hwSetNum"], data["value"]))
 # @app.route('/getAllUsers', methods=['GET'])
 # def get_all_users():
 #     return dumps(userdb.get_all_users())
@@ -67,18 +80,6 @@ def join_project():
 # @app.route('/getAllProjects', methods=['GET'])
 # def get_all_projects():
 #     return dumps(projectdb.get_all_projects())
-
-
-@app.route('/checkOut', methods=['POST'])
-def check_out():
-    data = request.get_json()
-    return dumps(projectdb.check_out_hardware(data["projectId"], data["hwSetNum"], data["value"]))
-
-
-@app.route('/checkIn', methods=['POST'])
-def check_in():
-    data = request.get_json()
-    return dumps(projectdb.check_in_hardware(data["projectId"], data["hwSetNum"], data["value"]))
 
 
 @app.route('/queryHardwareSet', methods=['POST'])
