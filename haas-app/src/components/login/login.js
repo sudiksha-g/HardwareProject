@@ -53,6 +53,8 @@ const Login = (props) => {
         password: userLoginData.password,
       })
       .then((response) => {
+        const token = response.data.access_token;
+        localStorage.setItem("token", token);
         console.log("response", response);
         setOpen(true);
         setMessage(response.data.message);

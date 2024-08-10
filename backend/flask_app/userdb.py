@@ -29,8 +29,8 @@ class UserDB(projectdb.ProjectDB):
     def login_user(self, username, password):
         user = self.get_user(username)
         if user and (user['password'] == password):
-            return dumps({"status": "error", "code": 200, "message": "Login Successful"}), 200
-        return dumps({"status": "error", "code": 500, "message": "Invalid username or password"}), 500
+            return 200
+        return 401
 
     def join_project(self, username, project_id):
         project = self.get_project(project_id)

@@ -14,7 +14,7 @@ import KeyboardArrowUpIcon from "@mui/icons-material/KeyboardArrowUp";
 import CommonButton from "../common/Button/button";
 import CommonTextBox from "../common/TextBox/textbox";
 import CommonDialog from "../common/DialogBox/dialogBox";
-import { Grid } from "@mui/material";
+import { Button, Grid } from "@mui/material";
 import axios from "axios";
 
 function Row(props) {
@@ -171,6 +171,12 @@ export default function CollapsibleTable() {
   const [dialogMessage, setDialogMessage] = useState("");
   const [clearQuantities, setClearQuantities] = useState(false);
 
+  const handleLogout = () => {
+    localStorage.removeItem("token");
+
+    window.location.href = "/";
+  };
+
   const handleCreateClick = () => {
     setOpenCreateNew(true);
     setOpenJoin(false);
@@ -197,14 +203,23 @@ export default function CollapsibleTable() {
   };
 
   const handleCreateProject = () => {
+    const token = localStorage.getItem("token");
     axios
-      .post("http://127.0.0.1:5000/createProject", {
-        projectId: projectData.projectId,
-        projectName: projectData.projectName,
-        projectDesc: projectData.projectDesc,
-      })
+      .post(
+        "http://127.0.0.1:5000/createProject",
+        {
+          projectId: projectData.projectId,
+          projectName: projectData.projectName,
+          projectDesc: projectData.projectDesc,
+        },
+        {
+          headers: {
+            Authorization: `Bearer ${token}`,
+          },
+        }
+      )
       .then((response) => {
-        setMessage(response.data);
+        // setMessage(response.data);
         setOpenDialog(true);
         setDialogMessage(response.data);
       })
@@ -214,11 +229,20 @@ export default function CollapsibleTable() {
   };
 
   const handleJoinProject = () => {
+    const token = localStorage.getItem("token");
     axios
-      .post("http://127.0.0.1:5000/joinProject", {
-        projectId: projectIdToJoin,
-        username: user,
-      })
+      .post(
+        "http://127.0.0.1:5000/joinProject",
+        {
+          projectId: projectIdToJoin,
+          username: user,
+        },
+        {
+          headers: {
+            Authorization: `Bearer ${token}`,
+          },
+        }
+      )
       .then((response) => {
         setJoinMessage(response.data);
         fetchProjectData();
@@ -233,13 +257,22 @@ export default function CollapsibleTable() {
 
   // Function to handle hardware checkout
   const handleCheckout = (projectId, hwSetNum, value) => {
+    const token = localStorage.getItem("token");
     if (value > 0) {
       axios
-        .post("http://127.0.0.1:5000/checkOut", {
-          projectId: projectId,
-          hwSetNum: hwSetNum,
-          value: value,
-        })
+        .post(
+          "http://127.0.0.1:5000/checkOut",
+          {
+            projectId: projectId,
+            hwSetNum: hwSetNum,
+            value: value,
+          },
+          {
+            headers: {
+              Authorization: `Bearer ${token}`,
+            },
+          }
+        )
         .then((response) => {
           setOpenDialog(true);
           setDialogMessage(response.data);
@@ -256,13 +289,22 @@ export default function CollapsibleTable() {
 
   // Function to handle hardware checkin
   const handleCheckin = (projectId, hwSetNum, value) => {
+    const token = localStorage.getItem("token");
     if (value > 0) {
       axios
-        .post("http://127.0.0.1:5000/checkIn", {
-          projectId: projectId,
-          hwSetNum: hwSetNum,
-          value: value,
-        })
+        .post(
+          "http://127.0.0.1:5000/checkIn",
+          {
+            projectId: projectId,
+            hwSetNum: hwSetNum,
+            value: value,
+          },
+          {
+            headers: {
+              Authorization: `Bearer ${token}`,
+            },
+          }
+        )
         .then((response) => {
           setOpenDialog(true);
           setDialogMessage(response.data);
@@ -278,18 +320,43 @@ export default function CollapsibleTable() {
   };
 
   const fetchProjectData = async () => {
+    const token = localStorage.getItem("token");
     try {
       const [firstHwResponse, secondHwResponse, projectsResponse] =
         await Promise.all([
-          axios.post("http://127.0.0.1:5000/queryHardwareSet", {
-            hwSetNum: 1,
-          }),
-          axios.post("http://127.0.0.1:5000/queryHardwareSet", {
-            hwSetNum: 2,
-          }),
-          axios.post("http://127.0.0.1:5000/getUserProjects", {
-            username: user,
-          }),
+          axios.post(
+            "http://127.0.0.1:5000/queryHardwareSet",
+            {
+              hwSetNum: 1,
+            },
+            {
+              headers: {
+                Authorization: `Bearer ${token}`,
+              },
+            }
+          ),
+          axios.post(
+            "http://127.0.0.1:5000/queryHardwareSet",
+            {
+              hwSetNum: 2,
+            },
+            {
+              headers: {
+                Authorization: `Bearer ${token}`,
+              },
+            }
+          ),
+          axios.post(
+            "http://127.0.0.1:5000/getUserProjects",
+            {
+              username: user,
+            },
+            {
+              headers: {
+                Authorization: `Bearer ${token}`,
+              },
+            }
+          ),
         ]);
 
       const hwFirstInfo = {
@@ -391,6 +458,7 @@ export default function CollapsibleTable() {
           </CommonButton>
         </Grid>
       </Grid>
+      <Button onClick={handleLogout}>Logout</Button>
       {openCreateNew && (
         <Grid container display="flex" justifyContent="center">
           <Grid item xs={6}>
