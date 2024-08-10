@@ -40,6 +40,7 @@ function createData(name, id, description) {
 
 function Row(props) {
   const { row } = props;
+  console.log("row : project data", row)
   const [open, setOpen] = React.useState(false);
 
   const handleArrowClick = () => {
@@ -59,9 +60,9 @@ function Row(props) {
           </IconButton>
         </TableCell>
         <TableCell component="th" scope="row">
-          {row.name}
+          {row.projectName}
         </TableCell>
-        <TableCell align="right">{row.id}</TableCell>
+        <TableCell align="right">{row.projectId}</TableCell>
         <TableCell align="right">{row.description}</TableCell>
       </TableRow>
       <TableRow>
@@ -89,7 +90,7 @@ function Row(props) {
                   </TableRow>
                 </TableHead>
                 <TableBody>
-                  {row.hwsets.map((historyRow) => (
+                  {/* {row.hwsets.map((historyRow) => (
                     <TableRow key={historyRow.name}>
                       <TableCell component="th" scope="row"></TableCell>
                       <TableCell component="th" scope="row">
@@ -127,7 +128,7 @@ function Row(props) {
                         </Grid>
                       </TableCell>
                     </TableRow>
-                  ))}
+                  ))} */}
                 </TableBody>
               </Table>
             </Box>
@@ -155,10 +156,17 @@ export default function CollapsibleTable() {
   const [projectIdToJoin, setProjectIdToJoin] = useState("");
   const [joinMessage, setJoinMessage] = useState("");
   const user = JSON.parse(sessionStorage.getItem('user'));
+  const [ projectsDataList, setProjectsDataList] = useState([]);
+  const [hwFirstInfo, setHwFirstInfo] = useState({
+    availability: "",
+    capacity: ""
+  });
+  const [hwSecondInfo, setHwSecondInfo] = useState({
+    availability: "",
+    capacity: ""
+  })
 
-
-
-  //
+  
   const handleCreateClick = () => {
     setOpenCreateNew(true);
     setOpenJoin(false);
@@ -210,31 +218,25 @@ export default function CollapsibleTable() {
   }
 
   useEffect(() => {
-    // Fetch user projects when component mounts
-    let data = JSON.stringify({
-      username: user
-    })
     if (user) {
-      axios.post("http://127.0.0.1:5000/getUserProjects", data ,
-        {
-          headers: {
-            'Content-Type': 'application/json', // Ensure the correct Content-Type header is set
-          },
+      axios.get("http://127.0.0.1:5000/getUserProjects", {
+        params: {
+          username: user,
         }
-      )
-        .then((response) => {
-          console.log("response". response)
-          //setProjects(response.data.projects || []); // Adjust based on your API response
-        })
-        .catch((error) => {
-          console.error("There was an error fetching user projects!", error);
-        });
+      })
+      .then((response) => {
+        console.log("response", response);
+        setProjectsDataList(response && response.data.projects);
+      })
+      .catch((error) => {
+        console.error("There was an error fetching user projects!", error);
+      });
     }
-  }, [user]);
-
+  }, [user]); 
 
   return (
     <Grid container style={{ margin: "24px", width: "auto" }}>
+      {console.log("projectsList", projectsDataList)}
       <TableContainer component={Paper}>
         <Table aria-label="collapsible table">
           <TableHead>
@@ -249,9 +251,10 @@ export default function CollapsibleTable() {
               </TableCell>
             </TableRow>
           </TableHead>
+          {console.log("rows", rows)}
           <TableBody>
-            {rows.map((row) => (
-              <Row key={row.name} row={row} />
+            {projectsDataList.map((project) => (
+              <Row key={project.projectId} row={project} />
             ))}
           </TableBody>
         </Table>
