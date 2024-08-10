@@ -186,7 +186,7 @@ export default function CollapsibleTable() {
     setProjectData({
       projectId: "",
       projectName: "",
-      projectDesc: ""
+      projectDesc: "",
     });
     setOpenJoin(true);
     setOpenCreateNew(false);
@@ -402,9 +402,7 @@ export default function CollapsibleTable() {
 
   //Enables the join project button only if the projectID is provided by user
   useEffect(() => {
-    if (
-      projectIdToJoin.trim() !== "" 
-    ) {
+    if (projectIdToJoin.trim() !== "") {
       setEnableJoinProject(true);
     } else {
       setEnableJoinProject(false);
@@ -414,7 +412,7 @@ export default function CollapsibleTable() {
   //Enables the create project button only if the details are filled
   useEffect(() => {
     const { projectName, projectDesc, projectId } = projectData || {};
-  
+
     if (
       projectName?.trim() !== "" &&
       projectDesc?.trim() !== "" &&
@@ -424,7 +422,7 @@ export default function CollapsibleTable() {
     } else {
       setEnableCreateProject(false);
     }
-  }, [projectData]);  
+  }, [projectData]);
 
   useEffect(() => {
     if (user) {
@@ -435,6 +433,18 @@ export default function CollapsibleTable() {
 
   return (
     <Grid container style={{ margin: "24px", width: "auto" }}>
+      <Grid
+        container
+        style={{
+          display: "flex",
+          justifyContent: "flex-end",
+          marginBottom: "24px",
+        }}
+      >
+        <Button onClick={handleLogout} variant="outlined">
+          Logout
+        </Button>
+      </Grid>
       <TableContainer component={Paper}>
         <Table aria-label="collapsible table">
           <TableHead>
@@ -489,7 +499,6 @@ export default function CollapsibleTable() {
           </CommonButton>
         </Grid>
       </Grid>
-      <Button onClick={handleLogout}>Logout</Button>
       {openCreateNew && (
         <Grid container display="flex" justifyContent="center">
           <Grid item xs={6}>
@@ -527,7 +536,10 @@ export default function CollapsibleTable() {
                 display="flex"
                 style={{ marginTop: "24px" }}
               >
-                <CommonButton onClick={handleCreateProject}  disabled={!enableCreateProject}>
+                <CommonButton
+                  onClick={handleCreateProject}
+                  disabled={!enableCreateProject}
+                >
                   Create
                 </CommonButton>
               </Grid>
@@ -560,7 +572,12 @@ export default function CollapsibleTable() {
                 display="flex"
                 style={{ marginTop: "24px" }}
               >
-                <CommonButton onClick={handleJoinProject} disabled={!enableJoinProject}>Join</CommonButton>
+                <CommonButton
+                  onClick={handleJoinProject}
+                  disabled={!enableJoinProject}
+                >
+                  Join
+                </CommonButton>
               </Grid>
             </Grid>
           </Grid>
