@@ -1,4 +1,4 @@
-import React, { useState,useEffect } from "react";
+import React, { useState, useEffect } from "react";
 import Box from "@mui/material/Box";
 import Collapse from "@mui/material/Collapse";
 import IconButton from "@mui/material/IconButton";
@@ -13,39 +13,31 @@ import KeyboardArrowDownIcon from "@mui/icons-material/KeyboardArrowDown";
 import KeyboardArrowUpIcon from "@mui/icons-material/KeyboardArrowUp";
 import CommonButton from "../common/Button/button";
 import CommonTextBox from "../common/TextBox/textbox";
-import { Button, Grid } from "@mui/material";
+import CommonDialog from "../common/DialogBox/dialogBox";
+import { Grid } from "@mui/material";
 import axios from "axios";
 
-function createData(name, id, description) {
-  return {
-    name,
-    id,
-    description,
-    hwsets: [
-      {
-        name: "Hardware Set 1",
-        capacity: 100,
-        availability: 100,
-        qty: 3,
-      },
-      {
-        name: "Hardware Set 2",
-        capacity: 100,
-        availability: 200,
-        qty: 2,
-      },
-    ],
-  };
-}
-
 function Row(props) {
-  const { row } = props;
-  console.log("row : project data", row)
-  const [open, setOpen] = React.useState(false);
+  const { row, onCheckout, onCheckin, clearQuantities } = props;
+  const [open, setOpen] = useState(false);
+  const [quantities, setQuantities] = useState({});
 
   const handleArrowClick = () => {
     setOpen(!open);
   };
+
+  const handleQuantityChange = (hwSetNum, value) => {
+    setQuantities({
+      ...quantities,
+      [hwSetNum]: value,
+    });
+  };
+
+  useEffect(() => {
+    if (clearQuantities) {
+      setQuantities({});
+    }
+  }, [clearQuantities]);
 
   return (
     <React.Fragment>
@@ -69,9 +61,6 @@ function Row(props) {
         <TableCell style={{ paddingBottom: 0, paddingTop: 0 }} colSpan={6}>
           <Collapse in={open} timeout="auto" unmountOnExit>
             <Box sx={{ margin: 1 }}>
-              {/* <Typography variant="h6" gutterBottom component="div">
-                Resources
-              </Typography> */}
               <Table size="small" aria-label="purchases">
                 <TableHead>
                   <TableRow>
@@ -86,41 +75,73 @@ function Row(props) {
                     <TableCell align="right" style={{ fontWeight: 600 }}>
                       Quantity
                     </TableCell>
+                    <TableCell align="right" style={{ fontWeight: 600 }}>
+                      Checked out Units
+                    </TableCell>
                     <TableCell align="right"></TableCell>
                   </TableRow>
                 </TableHead>
                 <TableBody>
-                  {/* {row.hwsets.map((historyRow) => (
-                    <TableRow key={historyRow.name}>
+                  {row.hwsets.map((hwInfo, index) => (
+                    <TableRow key={hwInfo.name}>
                       <TableCell component="th" scope="row"></TableCell>
                       <TableCell component="th" scope="row">
-                        {historyRow.name}
+                        {hwInfo.name}
                       </TableCell>
-                      <TableCell>{historyRow.capacity}</TableCell>
+                      <TableCell>{hwInfo.capacity}</TableCell>
+                      <TableCell align="right">{hwInfo.availability}</TableCell>
                       <TableCell align="right">
-                        {historyRow.availability}
-                      </TableCell>
-                      <TableCell align="right">
+                        {/* 
+                      <CommonTextBox
+                          style={{ width: "124px", padding: "8px" }}
+                          value={quantities[hwInfo.hwSetNum] || ""}
+                          onChange={(e) => handleQuantityChange(hwInfo.hwSetNum, e.target.value)}
+                        /> */}
                         <CommonTextBox
                           style={{ width: "124px", padding: "8px" }}
-                        >
-                          {historyRow.qty}
-                        </CommonTextBox>
+                          value={quantities[index + 1] || ""}
+                          onChange={(e) =>
+                            handleQuantityChange(index + 1, e.target.value)
+                          }
+                          type="number"
+                        />
                       </TableCell>
+                      <TableCell align="right">{hwInfo.checkedOut}</TableCell>
                       <TableCell align="right">
                         <Grid container spacing={2} justifyContent="end">
                           <Grid item>
+                            {/* 
                             <Button
                               variant="outlined"
                               style={{ borderRadius: "16px" }}
                             >
                               CheckIn
-                            </Button>
+                            </Button> */}
+                            <CommonButton
+                              variant="outlined"
+                              style={{ borderRadius: "16px" }}
+                              onClick={() =>
+                                onCheckin(
+                                  row.projectId,
+                                  index + 1,
+                                  parseInt(quantities[index + 1], 10)
+                                )
+                              }
+                            >
+                              CheckIn
+                            </CommonButton>
                           </Grid>
                           <Grid item>
                             <CommonButton
                               variant="outlined"
                               style={{ borderRadius: "16px" }}
+                              onClick={() =>
+                                onCheckout(
+                                  row.projectId,
+                                  index + 1,
+                                  parseInt(quantities[index + 1], 10)
+                                )
+                              }
                             >
                               CheckOut
                             </CommonButton>
@@ -128,7 +149,7 @@ function Row(props) {
                         </Grid>
                       </TableCell>
                     </TableRow>
-                  ))} */}
+                  ))}
                 </TableBody>
               </Table>
             </Box>
@@ -138,11 +159,6 @@ function Row(props) {
     </React.Fragment>
   );
 }
-
-const rows = [
-  createData("Project 1", 1, "Project created by user1"),
-  createData("Project 2", 2, "Project created by user2"),
-];
 
 export default function CollapsibleTable() {
   const [openCreateNew, setOpenCreateNew] = useState(false);
@@ -155,18 +171,12 @@ export default function CollapsibleTable() {
   const [message, setMessage] = useState("");
   const [projectIdToJoin, setProjectIdToJoin] = useState("");
   const [joinMessage, setJoinMessage] = useState("");
-  const user = JSON.parse(sessionStorage.getItem('user'));
-  const [ projectsDataList, setProjectsDataList] = useState([]);
-  const [hwFirstInfo, setHwFirstInfo] = useState({
-    availability: "",
-    capacity: ""
-  });
-  const [hwSecondInfo, setHwSecondInfo] = useState({
-    availability: "",
-    capacity: ""
-  })
+  const user = JSON.parse(sessionStorage.getItem("user"));
+  const [projectsDataList, setProjectsDataList] = useState([]);
+  const [openDialog, setOpenDialog] = useState(false);
+  const [dialogMessage, setDialogMessage] = useState("");
+  const [clearQuantities, setClearQuantities] = useState(false);
 
-  
   const handleCreateClick = () => {
     setOpenCreateNew(true);
     setOpenJoin(false);
@@ -182,9 +192,15 @@ export default function CollapsibleTable() {
     setProjectData({ ...projectData, [name]: value });
   };
 
-  const handleProjectIdToJoin = (e) =>{
-    setProjectIdToJoin(e.target.value)
-  }
+  const handleProjectIdToJoin = (e) => {
+    setProjectIdToJoin(e.target.value);
+  };
+
+  const handleCloseDialog = () => {
+    setOpenDialog(false);
+    fetchProjectData();
+    setClearQuantities((prevState) => !prevState);
+  };
 
   const handleCreateProject = () => {
     axios
@@ -194,7 +210,6 @@ export default function CollapsibleTable() {
         projectDesc: projectData.projectDesc,
       })
       .then((response) => {
-        console.log("response", response);
         setMessage(response.data);
       })
       .catch((error) => {
@@ -206,37 +221,122 @@ export default function CollapsibleTable() {
     axios
       .post("http://127.0.0.1:5000/joinProject", {
         projectId: projectIdToJoin,
-        username : user
+        username: user,
       })
       .then((response) => {
-        console.log("response", response);
         setJoinMessage(response.data);
       })
       .catch((error) => {
         console.error("There was an error!", error.response.data.message);
       });
-  }
+  };
+
+  // Function to handle hardware checkout
+  const handleCheckout = (projectId, hwSetNum, value) => {
+    if (value > 0) {
+      axios
+        .post("http://127.0.0.1:5000/checkOut", {
+          projectId: projectId,
+          hwSetNum: hwSetNum,
+          value: value,
+        })
+        .then((response) => {
+          setOpenDialog(true);
+          setDialogMessage(`Checked out ${value} units successfully.`);
+        })
+        .catch((error) => {
+          setDialogMessage("Error during checkout!");
+          setOpenDialog(true);
+          console.error("There was an error during checkout!", error);
+        });
+    } else {
+      alert("Invalid quantity: Quantity must be greater than zero.");
+    }
+  };
+
+  // Function to handle hardware checkin
+  const handleCheckin = (projectId, hwSetNum, value) => {
+    if (value > 0) {
+      axios
+        .post("http://127.0.0.1:5000/checkIn", {
+          projectId: projectId,
+          hwSetNum: hwSetNum,
+          value: value,
+        })
+        .then((response) => {
+          setOpenDialog(true);
+          setDialogMessage(`Checked in ${value} units successfully.`);
+        })
+        .catch((error) => {
+          setDialogMessage("Error during check-in!");
+          setOpenDialog(true);
+          console.error("There was an error during checkout!", error);
+        });
+    } else {
+      alert("Invalid quantity: Quantity must be greater than zero.");
+    }
+  };
+
+  const fetchProjectData = async () => {
+    try {
+      const [firstHwResponse, secondHwResponse, projectsResponse] =
+        await Promise.all([
+          axios.post("http://127.0.0.1:5000/queryHardwareSet", {
+            hwSetNum: 1,
+          }),
+          axios.post("http://127.0.0.1:5000/queryHardwareSet", {
+            hwSetNum: 2,
+          }),
+          axios.post("http://127.0.0.1:5000/getUserProjects", {
+            username: user,
+          }),
+        ]);
+
+      const hwFirstInfo = {
+        name: "Hardware Set 1",
+        capacity: firstHwResponse.data.capacity,
+        availability: firstHwResponse.data.availability,
+      };
+
+      const hwSecondInfo = {
+        name: "Hardware Set 2",
+        capacity: secondHwResponse.data.capacity,
+        availability: secondHwResponse.data.availability,
+      };
+
+      const combinedProjectsDataList = projectsResponse.data.projects.map(
+        (project) => ({
+          projectName: project.projectName,
+          projectId: project.projectId,
+          description: project.description,
+          hwsets: [
+            {
+              ...hwFirstInfo,
+              checkedOut: project.checkedOutList[0] || 0,
+            },
+            {
+              ...hwSecondInfo,
+              checkedOut: project.checkedOutList[1] || 0,
+            },
+          ],
+        })
+      );
+      setProjectsDataList(combinedProjectsDataList);
+      setClearQuantities(true);
+    } catch (error) {
+      console.error("There was an error fetching data!", error);
+    }
+  };
 
   useEffect(() => {
     if (user) {
-      axios.get("http://127.0.0.1:5000/getUserProjects", {
-        params: {
-          username: user,
-        }
-      })
-      .then((response) => {
-        console.log("response", response);
-        setProjectsDataList(response && response.data.projects);
-      })
-      .catch((error) => {
-        console.error("There was an error fetching user projects!", error);
-      });
+      fetchProjectData();
     }
-  }, [user]); 
+    // eslint-disable-next-line
+  }, [user]);
 
   return (
     <Grid container style={{ margin: "24px", width: "auto" }}>
-      {console.log("projectsList", projectsDataList)}
       <TableContainer component={Paper}>
         <Table aria-label="collapsible table">
           <TableHead>
@@ -251,14 +351,24 @@ export default function CollapsibleTable() {
               </TableCell>
             </TableRow>
           </TableHead>
-          {console.log("rows", rows)}
           <TableBody>
             {projectsDataList.map((project) => (
-              <Row key={project.projectId} row={project} />
+              <Row
+                key={project.projectId}
+                row={project}
+                onCheckout={handleCheckout}
+                onCheckin={handleCheckin}
+                clearQuantities={clearQuantities}
+              />
             ))}
           </TableBody>
         </Table>
       </TableContainer>
+      <CommonDialog
+        open={openDialog}
+        handleClose={handleCloseDialog}
+        content={dialogMessage}
+      ></CommonDialog>
       <Grid container display="flex" justifyContent="center" spacing={2}>
         <Grid
           item
@@ -304,15 +414,13 @@ export default function CollapsibleTable() {
                 label="Project Id"
                 name="projectId"
                 value={projectData.projectId}
-
-            onChange={handleTextChange}
+                onChange={handleTextChange}
               />
               <CommonTextBox
                 label="Project Description"
                 name="projectDesc"
                 value={projectData.projectDesc}
-
-            onChange={handleTextChange}
+                onChange={handleTextChange}
               />
               <Grid
                 item
@@ -326,9 +434,7 @@ export default function CollapsibleTable() {
               </Grid>
             </Grid>
           </Grid>
-          {message && (
-            <Grid>{message}</Grid>
-          )}
+          {message && <Grid>{message}</Grid>}
         </Grid>
       )}
       {openJoin && (
@@ -344,8 +450,12 @@ export default function CollapsibleTable() {
               Join an existing project
             </div>
             <Grid item xs={6}>
-              <CommonTextBox label="Project ID" name="projectId" 
-                value={projectIdToJoin} onChange={handleProjectIdToJoin}/>
+              <CommonTextBox
+                label="Project ID"
+                name="projectId"
+                value={projectIdToJoin}
+                onChange={handleProjectIdToJoin}
+              />
               <Grid
                 item
                 justifyContent="center"
@@ -356,9 +466,7 @@ export default function CollapsibleTable() {
               </Grid>
             </Grid>
           </Grid>
-          {joinMessage && (
-            <Grid>{joinMessage}</Grid>
-          )}
+          {joinMessage && <Grid>{joinMessage}</Grid>}
         </Grid>
       )}
     </Grid>
