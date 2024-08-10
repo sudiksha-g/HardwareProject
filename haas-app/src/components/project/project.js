@@ -91,12 +91,6 @@ function Row(props) {
                       <TableCell>{hwInfo.capacity}</TableCell>
                       <TableCell align="right">{hwInfo.availability}</TableCell>
                       <TableCell align="right">
-                        {/* 
-                      <CommonTextBox
-                          style={{ width: "124px", padding: "8px" }}
-                          value={quantities[hwInfo.hwSetNum] || ""}
-                          onChange={(e) => handleQuantityChange(hwInfo.hwSetNum, e.target.value)}
-                        /> */}
                         <CommonTextBox
                           style={{ width: "124px", padding: "8px" }}
                           value={quantities[index + 1] || ""}
