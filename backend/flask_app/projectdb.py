@@ -25,7 +25,6 @@ class ProjectDB(hardwaredb.HardwareDB):
             'projectName': project_name,
             'description': description,
             'checkedOutList': [0, 0],
-            'users': []
         }
 
         self.projects_collection.insert_one(new_project)
@@ -59,6 +58,7 @@ class ProjectDB(hardwaredb.HardwareDB):
 
     def check_out_hardware(self, project_id, hw_set_num, value):
         project = self.projects_collection.find_one({'projectId': project_id})
+        print(project)
         checked_out_list = project['checkedOutList']
         checked_out_value = self.de_allocate_units(hw_set_num, value)
         hw_set_num -= 1
@@ -68,7 +68,7 @@ class ProjectDB(hardwaredb.HardwareDB):
                 {'projectId': project_id},
                 {'$set': {'checkedOutList': checked_out_list}}
             )
-            return "Checked out, "+checked_out_value
+            return f"Checked out, {checked_out_value}"
         return "Couldn't check out"
 
     def check_in_hardware(self, project_id, hw_set_num, value):

@@ -38,7 +38,7 @@ class UserDB(projectdb.ProjectDB):
             {'$addToSet': {'projects': projectId}}
         )
         if result.modified_count > 0:
-            return dumps({"status": "error", "code": 200, "message": "User added to project successfully."}), 200
+            return dumps({"status": "Success", "code": 200, "message": "User added to project successfully."}), 200
         elif result.matched_count > 0:
             return dumps({"status": "error", "code": 500, "message": "User already part of the project."}), 500
         else:
@@ -53,6 +53,6 @@ class UserDB(projectdb.ProjectDB):
                 {'projectId': {'$in': project_id_list}})
             projects = list(projects)
             print("$$$$$$$$", projects)
-            return dumps({"uo": projects})
+            return dumps({"projects": projects}), 200
 
         return dumps({"status": "error", "code": 500, "message": "User not found."}), 500

@@ -211,11 +211,17 @@ export default function CollapsibleTable() {
 
   useEffect(() => {
     // Fetch user projects when component mounts
+    let data = JSON.stringify({
+      username: user
+    })
     if (user) {
-      axios
-        .get("http://127.0.0.1:5000/getUserProjects", {
-          username: user, // Adjust if needed to match your API
-        })
+      axios.post("http://127.0.0.1:5000/getUserProjects", data ,
+        {
+          headers: {
+            'Content-Type': 'application/json', // Ensure the correct Content-Type header is set
+          },
+        }
+      )
         .then((response) => {
           console.log("response". response)
           //setProjects(response.data.projects || []); // Adjust based on your API response
