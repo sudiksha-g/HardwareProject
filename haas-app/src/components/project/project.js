@@ -162,27 +162,32 @@ export default function CollapsibleTable() {
     projectName: "",
     projectDesc: "",
   });
-  const [message, setMessage] = useState("");
   const [projectIdToJoin, setProjectIdToJoin] = useState("");
-  const [joinMessage, setJoinMessage] = useState("");
   const user = JSON.parse(sessionStorage.getItem("user"));
   const [projectsDataList, setProjectsDataList] = useState([]);
   const [openDialog, setOpenDialog] = useState(false);
   const [dialogMessage, setDialogMessage] = useState("");
   const [clearQuantities, setClearQuantities] = useState(false);
+  const [enableCreateProject, setEnableCreateProject] = useState(false);
+  const [enableJoinProject, setEnableJoinProject] = useState(false);
 
   const handleLogout = () => {
     localStorage.removeItem("token");
-
     window.location.href = "/";
   };
 
   const handleCreateClick = () => {
+    setProjectIdToJoin("");
     setOpenCreateNew(true);
     setOpenJoin(false);
   };
 
   const handleJoinClick = () => {
+    setProjectData({
+      projectId: "",
+      projectName: "",
+      projectDesc: ""
+    });
     setOpenJoin(true);
     setOpenCreateNew(false);
   };
@@ -219,7 +224,6 @@ export default function CollapsibleTable() {
         }
       )
       .then((response) => {
-        // setMessage(response.data);
         setOpenDialog(true);
         setDialogMessage(response.data);
       })
@@ -246,7 +250,6 @@ export default function CollapsibleTable() {
         }
       )
       .then((response) => {
-        setJoinMessage(response.data);
         fetchProjectData();
         setOpenCreateNew(false);
         setOpenDialog(true);
@@ -397,6 +400,32 @@ export default function CollapsibleTable() {
     }
   };
 
+  //Enables the join project button only if the projectID is provided by user
+  useEffect(() => {
+    if (
+      projectIdToJoin.trim() !== "" 
+    ) {
+      setEnableJoinProject(true);
+    } else {
+      setEnableJoinProject(false);
+    }
+  }, [projectIdToJoin]);
+
+  //Enables the create project button only if the details are filled
+  useEffect(() => {
+    const { projectName, projectDesc, projectId } = projectData || {};
+  
+    if (
+      projectName?.trim() !== "" &&
+      projectDesc?.trim() !== "" &&
+      projectId?.trim() !== ""
+    ) {
+      setEnableCreateProject(true);
+    } else {
+      setEnableCreateProject(false);
+    }
+  }, [projectData]);  
+
   useEffect(() => {
     if (user) {
       fetchProjectData();
@@ -498,13 +527,12 @@ export default function CollapsibleTable() {
                 display="flex"
                 style={{ marginTop: "24px" }}
               >
-                <CommonButton onClick={handleCreateProject}>
+                <CommonButton onClick={handleCreateProject}  disabled={!enableCreateProject}>
                   Create
                 </CommonButton>
               </Grid>
             </Grid>
           </Grid>
-          {message && <Grid>{message}</Grid>}
         </Grid>
       )}
       {openJoin && (
@@ -532,11 +560,10 @@ export default function CollapsibleTable() {
                 display="flex"
                 style={{ marginTop: "24px" }}
               >
-                <CommonButton onClick={handleJoinProject}>Join</CommonButton>
+                <CommonButton onClick={handleJoinProject} disabled={!enableJoinProject}>Join</CommonButton>
               </Grid>
             </Grid>
           </Grid>
-          {/* {joinMessage && <Grid>{joinMessage}</Grid>} */}
         </Grid>
       )}
     </Grid>
