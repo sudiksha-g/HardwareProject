@@ -17,7 +17,9 @@ app.config['JWT_SECRET_KEY'] = '8692eb049743088c8e8068e72d47cab56e45bbaca24ca740
 jwt = JWTManager(app)
 CORS(app, resources={r"/*": {"origins": "http://localhost:3000"}})
 
-client = MongoClient('localhost', 27017)
+# client = MongoClient('localhost', 27017) # FOR DEV
+client = MongoClient(
+    "mongodb+srv://thisisanurag:kyEpb0mS8dueCh3i@mojodb.noka1.mongodb.net/?retryWrites=true&w=majority&appName=mojodb")  # FOR PROD
 db = client['flask_db']
 
 userdb = UserDB(db)

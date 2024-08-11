@@ -9,7 +9,7 @@ alias deactivate 'test $?_OLD_VIRTUAL_PATH != 0 && setenv PATH "$_OLD_VIRTUAL_PA
 # Unset irrelevant variables.
 deactivate nondestructive
 
-setenv VIRTUAL_ENV "/Users/thisisanurag/Documents/mojo_final/mojo_repo/backend/flask_app/mojo_venv"
+setenv VIRTUAL_ENV "/Users/thisisanurag/Documents/mojo_final/mojo_repo/backend/flask_app/mojo_virtual"
 
 set _OLD_VIRTUAL_PATH="$PATH"
 setenv PATH "$VIRTUAL_ENV/bin:$PATH"
@@ -18,8 +18,8 @@ setenv PATH "$VIRTUAL_ENV/bin:$PATH"
 set _OLD_VIRTUAL_PROMPT="$prompt"
 
 if (! "$?VIRTUAL_ENV_DISABLE_PROMPT") then
-    set prompt = "(mojo_venv) $prompt"
-    setenv VIRTUAL_ENV_PROMPT "(mojo_venv) "
+    set prompt = "(mojo_virtual) $prompt"
+    setenv VIRTUAL_ENV_PROMPT "(mojo_virtual) "
 endif
 
 alias pydoc python -m pydoc

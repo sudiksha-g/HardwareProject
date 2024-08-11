@@ -1,4 +1,4 @@
-#!/Users/thisisanurag/Documents/mojo_final/mojo_repo/backend/flask_app/mojo_venv/bin/python3.12
+#!/Users/thisisanurag/Documents/mojo_final/mojo_repo/backend/flask_app/mojo_virtual/bin/python3.12
 # -*- coding: utf-8 -*-
 import re
 import sys
