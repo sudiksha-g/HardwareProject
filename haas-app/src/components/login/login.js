@@ -4,7 +4,6 @@ import CommonButton from "../common/Button/button";
 import { Grid, Typography } from "@mui/material";
 import { Link, useNavigate } from "react-router-dom";
 import axios from "axios";
-import { fontSize } from "@mui/system";
 
 const styles = {
   titleContainer: {
@@ -55,14 +54,13 @@ const Login = (props) => {
       .then((response) => {
         const token = response.data.access_token;
         localStorage.setItem("token", token);
-        console.log("response", response);
+
         setOpen(true);
         setMessage(response.data.message);
-        sessionStorage.setItem('user', JSON.stringify(userLoginData.userName));
+        sessionStorage.setItem("user", JSON.stringify(userLoginData.userName));
         navigate("/project");
       })
       .catch((error) => {
-        console.error("There was an error!", error.response.data.message);
         setError(true);
         setMessage(error.response.data.message);
       });

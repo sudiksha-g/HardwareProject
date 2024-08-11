@@ -250,13 +250,16 @@ export default function CollapsibleTable() {
         }
       )
       .then((response) => {
+        console.log(response);
         fetchProjectData();
         setOpenCreateNew(false);
         setOpenDialog(true);
-        setDialogMessage(response.data);
+        setDialogMessage(response.data.message);
       })
       .catch((error) => {
         console.error("There was an error!", error.response.data.message);
+        setOpenDialog(true);
+        setDialogMessage(error.response.data.message);
       });
   };
 

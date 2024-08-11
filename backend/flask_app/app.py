@@ -48,7 +48,7 @@ def login_user():
         access_token = create_access_token(identity=username)
         return jsonify(access_token=access_token), 200
     else:
-        return response
+        return jsonify({"status": "Failure", "code": 401, "message": "Invalid Creds!"}), 401
 
 
 @app.route('/getUserProjects', methods=['POST'])
@@ -69,7 +69,7 @@ def create_project():
 @jwt_required()
 def join_project():
     data = request.get_json()
-    return dumps(userdb.join_project(data["username"], data["projectId"]))
+    return userdb.join_project(data["username"], data["projectId"])
 
 
 @app.route('/checkOut', methods=['POST'])
