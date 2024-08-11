@@ -170,6 +170,7 @@ export default function CollapsibleTable() {
   const [clearQuantities, setClearQuantities] = useState(false);
   const [enableCreateProject, setEnableCreateProject] = useState(false);
   const [enableJoinProject, setEnableJoinProject] = useState(false);
+  const [validationError, setValidationError] = useState("");
 
   const handleLogout = () => {
     localStorage.removeItem("token");
@@ -180,6 +181,7 @@ export default function CollapsibleTable() {
     setProjectIdToJoin("");
     setOpenCreateNew(true);
     setOpenJoin(false);
+    setValidationError("");
   };
 
   const handleJoinClick = () => {
@@ -195,6 +197,7 @@ export default function CollapsibleTable() {
   const handleTextChange = (e) => {
     const { name, value } = e.target;
     setProjectData({ ...projectData, [name]: value });
+    setValidationError("");
   };
 
   const handleProjectIdToJoin = (e) => {
@@ -209,6 +212,16 @@ export default function CollapsibleTable() {
 
   const handleCreateProject = () => {
     const token = localStorage.getItem("token");
+    const projectId = parseInt(projectData.projectId, 10);
+
+    if (isNaN(projectId) || projectId <= 0) {
+      setValidationError(
+        "Invalid Project ID: Project ID must be a positive number greater than zero."
+      );
+      return;
+    }
+    setValidationError("");
+
     axios
       .post(
         "http://127.0.0.1:5000/createProject",
@@ -532,7 +545,12 @@ export default function CollapsibleTable() {
                 name="projectDesc"
                 value={projectData.projectDesc}
                 onChange={handleTextChange}
-              />
+              />              
+              {validationError && (
+                <div style={{ color: "red", marginTop: "8px" }}>
+                  {validationError}
+                </div>
+              )}
               <Grid
                 item
                 justifyContent="center"
