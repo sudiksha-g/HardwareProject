@@ -1,10 +1,9 @@
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import CommonTextBox from "../common/TextBox/textbox";
 import CommonButton from "../common/Button/button";
 import { Grid, Typography } from "@mui/material";
 import { Link } from "react-router-dom";
 import axios from "axios";
-import { display } from "@mui/system";
 
 const styles = {
   root: {
@@ -38,6 +37,7 @@ const Register = (props) => {
   const [open, setOpen] = useState(false);
   const [error, setError] = useState(false);
   const [isRegistered, setIsRegistered] = useState(false);
+  const [enableRegister, setEnableRegister] = useState(false);
 
   const handleChange = (e) => {
     const { name, value } = e.target;
@@ -65,6 +65,18 @@ const Register = (props) => {
         setMessage(error.response.data.message);
       });
   };
+
+  useEffect(() => {
+    if (
+      formData &&
+      formData.userName.trim() !== "" &&      
+      formData.password.trim() !== ""
+    ) {
+      setEnableRegister(true);
+    } else {
+      setEnableRegister(false);
+    }
+  }, [formData]);
 
   return (
     <Grid sx={styles.root}>
@@ -105,6 +117,7 @@ const Register = (props) => {
                   color="primary"
                   fullWidth
                   onClick={handleRegister}
+                  disabled={!enableRegister}
                 >
                   Submit
                 </CommonButton>
