@@ -17,9 +17,9 @@ app.config['JWT_SECRET_KEY'] = '8692eb049743088c8e8068e72d47cab56e45bbaca24ca740
 jwt = JWTManager(app)
 CORS(app, resources={r"/*": {"origins": "http://localhost:3000"}})
 
-# client = MongoClient('localhost', 27017) # FOR DEV
-client = MongoClient(
-    "mongodb+srv://thisisanurag:kyEpb0mS8dueCh3i@mojodb.noka1.mongodb.net/?retryWrites=true&w=majority&appName=mojodb")  # FOR PROD
+client = MongoClient('localhost', 27017) # FOR DEV
+# client = MongoClient(
+#     "mongodb+srv://thisisanurag:kyEpb0mS8dueCh3i@mojodb.noka1.mongodb.net/?retryWrites=true&w=majority&appName=mojodb")  # FOR PROD
 db = client['flask_db']
 
 userdb = UserDB(db)
@@ -27,8 +27,8 @@ projectdb = ProjectDB(db)
 hardwaredb = HardwareDB(db)
 
 # Instantiating checkedOutList
-hardwaredb.create_hardware_set(1, 100)
-hardwaredb.create_hardware_set(2, 100)
+hardwaredb.create_hardware_set(1, 1000)
+hardwaredb.create_hardware_set(2, 1000)
 # projectdb.init_projects()
 
 
