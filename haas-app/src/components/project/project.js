@@ -68,7 +68,7 @@ function Row(props) {
                     <TableCell style={{ fontWeight: 600 }}>
                       Hardware Set
                     </TableCell>
-                    <TableCell style={{ fontWeight: 600 }}>Capactiy</TableCell>
+                    <TableCell style={{ fontWeight: 600 }}>Capacity</TableCell>
                     <TableCell align="right" style={{ fontWeight: 600 }}>
                       Availability
                     </TableCell>
