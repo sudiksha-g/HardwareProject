@@ -1,102 +1,101 @@
 # Python
-__pycache__/
-*.py[cod]
-*.pyo
-*.pyd
-*.env
-.env
-.venv/
-venv/
-env/
-# If you use Jupyter notebooks
-.ipynb_checkpoints/
+**/__pycache__/
+**/*.py[cod]
+**/*.pyo
+**/*.pyd
+**/.env
+**/.venv/
+**/venv/
+**/env/
+
+# Jupyter Notebooks
+**/.ipynb_checkpoints/
 
 # MongoDB
-# Ignore local MongoDB database files
-/data/db/
-data/
-database/
+**/data/db/
+**/data/
+**/database/
 
 # Virtual environments
-.Python
-python_env/
-local_env/
-.venv/
-venv/
-ENV/
-env.bak/
-venv.bak/
+**/.Python
+**/python_env/
+**/local_env/
+**/.venv/
+**/venv/
+**/ENV/
+**/env.bak/
+**/venv.bak/
 
 # macOS
-.DS_Store
-.AppleDouble
-.LSOverride
+**/.DS_Store
+**/.AppleDouble
+**/.LSOverride
 
 # Windows
-Thumbs.db
-ehthumbs.db
-Desktop.ini
-$RECYCLE.BIN/
+**/Thumbs.db
+**/ehthumbs.db
+**/Desktop.ini
+**/$RECYCLE.BIN/
 
 # Visual Studio Code
-.vscode/
+**/.vscode/
 
 # Logs
-*.log
+**/*.log
 
 # Node.js
-node_modules/
-npm-debug.log*
-yarn-debug.log*
-yarn-error.log*
+**/node_modules/
+**/npm-debug.log*
+**/yarn-debug.log*
+**/yarn-error.log*
 
 # React build directory
-build/
-dist/
+**/build/
+**/dist/
 
 # Ignore config files
-*.local
-*.dev
-*.prod
-*.test
+**/*.local
+**/*.dev
+**/*.prod
+**/*.test
 
 # Other
-*.swp
-*.swo
-*.swn
-*.pid
+**/*.swp
+**/*.swo
+**/*.swn
+**/*.pid
 
-# Coverage directory used by tools like istanbul
-coverage/
+# Coverage directory used by tools like Istanbul
+**/coverage/
 
 # dotenv environment variables file
-.env.local
-.env.development.local
-.env.test.local
-.env.production.local
+**/.env.local
+**/.env.development.local
+**/.env.test.local
+**/.env.production.local
 
 # Optional npm cache directory
-.npm/
+**/.npm/
 
 # Optional eslint cache
-.eslintcache
+**/.eslintcache
 
 # Parcel-bundler cache (https://parceljs.org/)
-.cache
+**/.cache
 
 # Next.js build output
-.next/
+**/.next/
 
 # Nuxt.js build / generate output
-.nuxt
-dist/
+**/.nuxt
+**/dist/
 
 # Gatsby files
-.cache/
-public/
+**/.cache/
+**/public/
 
 # Vue.js
-*.vue
+**/*.vue
 
-#package lock files
-package-lock.json
+# Package lock files
+**/package-lock.json
